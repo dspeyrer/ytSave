@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ispinner.css@3/ispinner.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="loadingContainer">
+      <div class="ispinner ispinner" id="loader">
+        <div class="ispinner-blade"></div>
+        <div class="ispinner-blade"></div>
+        <div class="ispinner-blade"></div>
+        <div class="ispinner-blade"></div>
+        <div class="ispinner-blade"></div>
+        <div class="ispinner-blade"></div>
+        <div class="ispinner-blade"></div>
+        <div class="ispinner-blade"></div>
+      </div>
+    </div>
+    <div id="content" style="visibility: hidden">
+      <div id="userSelect">
+        <img class="icon" id="activeIcon" />
+        <div id="userList" style="visibility: hidden"></div>
+      </div>
+    </div>
+    <script src="browser-polyfill.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,127 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
+html,
+body {
+  width: 400px;
+  height: 400px;
+  margin: 0;
+  font-family: "Roboto";
+  font-size: 14px;
+}
+
+#addNew {
+  line-height: 15px;
+  height: 14px;
+}
+
+#addNew img {
+  margin-top: -2px;
+  margin-left: 8px;
+}
+
+#userList .email {
+  position: relative;
+  display: block;
+}
+
+#loadingContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#activeIcon {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+}
+
+.icon {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+}
+
+.user {
+  display: grid;
+  grid-template-columns: 32px 160px;
+  grid-template-rows: 16px 16px;
+  gap: 0px 8px;
+  grid-template-areas:
+    "icon name"
+    "icon subtitle";
+  width: 200px;
+  cursor: pointer;
+}
+
+.user .icon {
+  grid-area: icon;
+}
+
+.user .name,
+.user .subtitle {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.user .name {
+  grid-area: name;
+  align-self: end;
+}
+.user .subtitle {
+  grid-area: subtitle;
+  align-self: start;
+}
+
+#userList {
+  border-radius: 5px;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 5px 0px;
+}
+
+#userList > * {
+  padding: 5px 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  html,
+  body {
+    background-color: #181818;
+    color: white;
+  }
+
+  #addNew img {
+    filter: invert();
+  }
+
+  #activeIcon:hover {
+    box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, 0.3);
+  }
+
+  #userList .user:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  #userList {
+    background: #181818;
+    border: rgba(255, 255, 255, 0.3) solid 1px;
+  }
+
+  .user .subtitle {
+    color: rgb(170, 170, 170);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  html,
+  body {
+    background-color: #f9f9f9;
+    color: black;
+  }
+}
