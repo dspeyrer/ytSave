@@ -3,19 +3,46 @@ const loader = document.getElementById("loader"),
   activeIcon = document.getElementById("activeIcon"),
   userList = document.getElementById("userList"),
   userSelect = document.getElementById("userSelect"),
-  sortActive = (a, b) => (a.active ? -1 : b.active ? 1 : 0),
-  hideUserlist = () => {
-    userList.innerHTML = "";
-    userList.style.visibility = "hidden";
-  };
+  sortActive = (a, b) => (a.active ? -1 : b.active ? 1 : 0);
+
+function hideUserlist() {
+  userList.innerHTML = "";
+  userList.style.visibility = "hidden";
+}
+
+function showUserlist(users) {
+  users.forEach((i) => {
+    let email = document.createElement("span");
+    email.className = "email";
+    email.innerHTML = i.email;
+    userList.appendChild(email);
+    i.accounts.forEach((j) => {
+      let el = document.createElement("div");
+      el.className = "user";
+      el.onclick = j.active ? hideUserlist : () => changeUser(j.endpoint);
+      el.innerHTML = `<img class="icon" src="${j.icon}"/>
+          <div class="name">${j.name}</div>
+          <div class="subtitle">
+            ${j.byline}
+          </div>`;
+      userList.appendChild(el);
+    });
+  });
+
+  let addAccount = document.createElement("div");
+  addAccount.id = "addNew";
+  addAccount.className = "user";
+  addAccount.innerHTML = `<img src="adduser.svg" /> Add another account`;
+  addAccount.onclick = () => login(true);
+  userList.appendChild(addAccount);
+  userList.style.visibility = "visible";
+}
 
 document.body.onclick = (e) => {
   if (!userSelect.contains(e.target)) hideUserlist();
 };
 
 async function initHandler(users) {
-  let currentUser = users[0].accounts[0];
-
   await Promise.all(
     users
       .map((user) =>
@@ -38,34 +65,8 @@ async function initHandler(users) {
   loader.style.visibility = "hidden";
   content.style.visibility = "visible";
 
-  activeIcon.src = currentUser.icon;
-  activeIcon.onclick = () => {
-    users.forEach((i) => {
-      let email = document.createElement("span");
-      email.className = "email";
-      email.innerHTML = i.email;
-      userList.appendChild(email);
-      i.accounts.forEach((j) => {
-        let el = document.createElement("div");
-        el.className = "user";
-        el.onclick = j.active ? hideUserlist : () => changeUser(j.endpoint);
-        el.innerHTML = `<img class="icon" src="${j.icon}"/>
-          <div class="name">${j.name}</div>
-          <div class="subtitle">
-            ${j.byline}
-          </div>`;
-        userList.appendChild(el);
-      });
-    });
-
-    let addAccount = document.createElement("div");
-    addAccount.id = "addNew";
-    addAccount.className = "user";
-    addAccount.innerHTML = `<img src="adduser.svg" /> Add another account`;
-    addAccount.onclick = () => login(true);
-    userList.appendChild(addAccount);
-    userList.style.visibility = "visible";
-  };
+  activeIcon.src = users[0].accounts[0].icon;
+  activeIcon.onclick = () => showUserlist(users);
 }
 
 function changeUser(endpoint) {
@@ -75,12 +76,6 @@ function changeUser(endpoint) {
   let res = fetch(endpoint);
   res.then(getUsers).then(initHandler);
 }
-
-getUsers()
-  .catch((e) => {
-    login();
-  })
-  .then(initHandler);
 
 function getConfig(url) {
   fetch("https://youtube.com/" + url, {
@@ -159,3 +154,9 @@ async function getUsers() {
     })
     .sort(sortActive);
 }
+
+getUsers()
+  .catch((e) => {
+    login();
+  })
+  .then(initHandler);
