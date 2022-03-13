@@ -2,6 +2,7 @@ const loader = document.getElementById("loader"),
   content = document.getElementById("content"),
   activeIcon = document.getElementById("activeIcon"),
   userList = document.getElementById("userList"),
+  userSelect = document.getElementById("userSelect"),
   sortActive = (a, b) => (a.active ? -1 : b.active ? 1 : 0),
   hideUserlist = () => {
     userList.innerHTML = "";
@@ -14,6 +15,23 @@ document.body.onclick = (e) => {
 
 async function initHandler(users) {
   let currentUser = users[0].accounts[0];
+
+  await Promise.all(
+    users
+      .map((user) =>
+        Promise.all(
+          user.accounts.map(
+            (account) =>
+              new Promise((resolve) => {
+                let img = new Image();
+                img.onload = resolve;
+                img.src = account.icon;
+              })
+          )
+        )
+      )
+      .concat(document.fonts.load("14px Roboto"))
+  );
 
   hideUserlist();
 
@@ -59,10 +77,10 @@ function changeUser(endpoint) {
 }
 
 getUsers()
-  .then(initHandler)
   .catch((e) => {
     login();
-  });
+  })
+  .then(initHandler);
 
 function getConfig(url) {
   fetch("https://youtube.com/" + url, {
