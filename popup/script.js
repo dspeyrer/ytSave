@@ -42,28 +42,22 @@ document.body.onclick = (e) => {
   if (!userSelect.contains(e.target)) hideUserlist();
 };
 
-async function initHandler(users) {
+async function loadUserData(users) {
   await Promise.all(
-    users
-      .map((user) =>
-        Promise.all(
-          user.accounts.map(
-            (account) =>
-              new Promise((resolve) => {
-                let img = new Image();
-                img.onload = resolve;
-                img.src = account.icon;
-              })
-          )
+    users.map((user) =>
+      Promise.all(
+        user.accounts.map(
+          (account) =>
+            new Promise((resolve) => {
+              let img = new Image();
+              img.onload = resolve;
+              img.src = account.icon;
+            })
         )
       )
-      .concat(document.fonts.load("14px Roboto"))
+    )
   );
 
-  hideUserlist();
-
-  loader.style.visibility = "hidden";
-  content.style.visibility = "visible";
 
   activeIcon.src = users[0].accounts[0].icon;
   activeIcon.onclick = () => showUserlist(users);
@@ -73,8 +67,8 @@ function changeUser(endpoint) {
   loader.style.visibility = "visible";
   content.style.visibility = "hidden";
   userList.style.visibility = "hidden";
-  let res = fetch(endpoint);
-  res.then(getUsers).then(initHandler);
+  hideUserlist();
+  fetch(endpoint).then(load);
 }
 
 function getConfig(url) {
@@ -109,8 +103,6 @@ async function login(addAcc = false) {
 
   window.close();
 }
-
-function loadImage(img) {}
 
 async function getUsers() {
   let res = await fetch("https://www.youtube.com/getAccountSwitcherEndpoint", {
@@ -155,8 +147,21 @@ async function getUsers() {
     .sort(sortActive);
 }
 
-getUsers()
-  .catch((e) => {
-    login();
-  })
-  .then(initHandler);
+async function load() {
+  let context = {};
+
+  await Promise.all([
+    getUsers()
+      .catch((e) => {
+        login();
+      })
+      .then(loadUserData),
+    document.fonts.load("14px Roboto"),
+  ]);
+
+
+  loader.style.visibility = "hidden";
+  content.style.visibility = "visible";
+}
+
+load();
