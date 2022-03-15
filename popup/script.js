@@ -71,21 +71,28 @@ function changeUser(endpoint) {
   fetch(endpoint).then(load);
 }
 
-function getConfig(url) {
-  fetch("https://youtube.com/" + url, {
+async function getYoutubeData(url) {
+  let data = await fetch("https://youtube.com" + url, {
     credentials: "include",
-  }).then(async (res) => {
-    let data = (d2 = await res.text());
+  }).then((res) => res.text());
 
-    ytcfg = {};
+  return JSON.parse(
+    "{" + data.match(/(?<=var ytInitialData = {).*?(?=};)/s) + "}"
+  );
+}
 
-    while (d2.includes("ytcfg.set(")) {
-      d2 = d2.slice(d2.indexOf("ytcfg.set({") + 10);
-      ytcfg = {
-        ...ytcfg,
-        ...JSON.parse(d2.slice(0, d2.indexOf("});") + 1) || "{}"),
-      };
-    }
+async function getInternalApiParams(url) {
+  let data = await fetch("https://youtube.com/", {
+    credentials: "include",
+  }).then((res) => res.text());
+
+  return data
+    .match(/(?<=ytcfg\.set\({).*?(?=}\);)/gs)
+    .map((i) => JSON.parse("{" + i + "}"))
+    .reduce((a, i) => {
+      return { ...a, ...i };
+    }, {});
+}
 
     data = data.slice(data.indexOf("var ytInitialData = {") + 20);
 
@@ -157,6 +164,21 @@ async function load() {
       })
       .then(loadUserData),
     document.fonts.load("14px Roboto"),
+    getInternalApiParams().then(
+      (data) =>
+        (context = {
+          ...context,
+          name: data.INNERTUBE_CLIENT_NAME,
+          version: data.INNERTUBE_CLIENT_VERSION,
+          key: data.INNERTUBE_API_KEY,
+        })
+    ),
+    browser.cookies
+      .get({
+        url: "https://youtube.com",
+        name: "SAPISID",
+      })
+      .then((cookie) => (context.SAPISID = cookie.value)),
   ]);
 
 
