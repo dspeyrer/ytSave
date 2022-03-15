@@ -94,12 +94,46 @@ async function getInternalApiParams(url) {
     }, {});
 }
 
-    data = data.slice(data.indexOf("var ytInitialData = {") + 20);
+async function sha1hash(data) {
+  return [
+    ...new Uint8Array(
+      await crypto.subtle.digest("SHA-1", new TextEncoder().encode(data))
+    ),
+  ]
+    .map((i) => i.toString(16))
+    .join("");
+}
 
-    ytres = JSON.parse(data.slice(0, data.indexOf("};") + 1));
+async function apiAuthHeader(SAPISID) {
+  let timestamp = Math.floor(new Date().getTime() / 1000);
+  return `SAPISIDHASH ${timestamp}_${await sha1hash(
+    timestamp + " " + SAPISID + " https://www.youtube.com"
+  )}`;
+}
 
-    console.log(ytcfg, ytres);
-  });
+async function internalApiRequest(endpoint, body, context) {
+  let data = await fetch(
+    `https://www.youtube.com/youtubei/v1/${endpoint}?key=${context.key}`,
+    {
+      headers: {
+        Authentication: apiAuthHeader(context.SAPISID),
+      },
+      body: {
+        context: {
+          client: {
+            clientName: context.name,
+            clientVersion: context.version,
+          },
+        },
+        ...body,
+      },
+      method: "POST",
+    }
+  ).then((res) => res.json());
+
+  console.info(data);
+
+  return data.status;
 }
 
 async function login(addAcc = false) {
