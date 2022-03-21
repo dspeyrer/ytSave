@@ -76,9 +76,12 @@ async function getYoutubeData(url) {
     credentials: "include",
   }).then((res) => res.text());
 
-  return JSON.parse(
-    "{" + data.match(/(?<=var ytInitialData = {).*?(?=};)/s) + "}"
-  );
+  return {
+    initialData: JSON.parse(
+      "{" + data.match(/(?<=var ytInitialData = {).*?(?=};)/s) + "}"
+    ),
+    context: getInternalApiParams(data),
+  };
 }
 
 async function getInternalApiParams(url) {
@@ -111,22 +114,18 @@ async function apiAuthHeader() {
   )}`;
 }
 
-async function internalApiRequest(endpoint, body, context) {
-  let data = await fetch(
-    `https://www.youtube.com/youtubei/v1/${endpoint}?key=${context.key}`,
+async function internalApiRequest(method, endpoint, body, context) {
+  return await fetch(
+    `https://www.youtube.com/youtubei/${context.INNERTUBE_API_VERSION}/${endpoint}?key=${context.INNERTUBE_API_KEY}&prettyPrint=false`,
     {
       headers: {
       },
-      body: {
-        context: {
-          client: {
-            clientName: context.name,
-            clientVersion: context.version,
-          },
-        },
+      body: JSON.stringify({
+        context: context.INNERTUBE_CONTEXT,
         ...body,
-      },
-      method: "POST",
+      }),
+      method,
+      mode: "cors",
     }
   ).then((res) => res.json());
 
@@ -188,8 +187,6 @@ async function getUsers() {
 }
 
 async function load() {
-  let context = {};
-
   await Promise.all([
     getUsers()
       .catch((e) => {
@@ -197,15 +194,6 @@ async function load() {
       })
       .then(loadUserData),
     document.fonts.load("14px Roboto"),
-    getInternalApiParams().then(
-      (data) =>
-        (context = {
-          ...context,
-          name: data.INNERTUBE_CLIENT_NAME,
-          version: data.INNERTUBE_CLIENT_VERSION,
-          key: data.INNERTUBE_API_KEY,
-        })
-    ),
     browser.cookies
       .get({
         url: "https://youtube.com",
