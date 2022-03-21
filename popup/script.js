@@ -3,8 +3,37 @@ const loader = document.getElementById("loader"),
   activeIcon = document.getElementById("activeIcon"),
   userList = document.getElementById("userList"),
   userSelect = document.getElementById("userSelect"),
-  sortActive = (a, b) => (a.active ? -1 : b.active ? 1 : 0);
+  headerPrefix = "__YTSAVE_HEADER_" + Math.random().toString(36).slice(2) + "_",
+  sortActive = (a, b) => (a.active ? -1 : b.active ? 1 : 0),
+  headerReducer = (a, i) => {
+    a[i.name] = i.value;
+    return a;
+  };
+
 let SAPISID = null;
+
+browser.webRequest.onBeforeSendHeaders.addListener(
+  ({ requestHeaders }) => {
+    requestHeaders
+      .filter((i) => i.name.startsWith(headerPrefix))
+      .forEach((i) => {
+        let name = i.name.replace(headerPrefix, "");
+
+        requestHeaders = requestHeaders.filter(
+          (j) =>
+            j.name.toLowerCase() != name.toLowerCase() &&
+            j.name.toLowerCase() != i.name.toLowerCase()
+        );
+        requestHeaders.push({ name, value: i.value });
+      });
+
+    return { requestHeaders };
+  },
+  {
+    urls: ["*://*.youtube.com/*"],
+  },
+  ["requestHeaders", "blocking"]
+);
 
 function hideUserlist() {
   userList.innerHTML = "";
