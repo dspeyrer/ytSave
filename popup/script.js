@@ -122,6 +122,45 @@ function getInternalApiParams(data) {
     }, {});
 }
 
+async function getSubscriptionsFeed(continuation, context) {
+  let data, continuationData;
+  if (continuation) {
+    let response = await internalApiRequest(
+      "POST",
+      "browse",
+      {
+        continuation,
+      },
+      context
+    );
+
+    data =
+      response.onResponseReceivedActions[0].appendContinuationItemsAction
+        .continuationItems;
+  } else {
+    let response = await getYoutubeData("feed/subscriptions");
+    continuationData = response.context;
+    data =
+      response.initialData.contents.twoColumnBrowseResultsRenderer.tabs[0]
+        .tabRenderer.content.sectionListRenderer.contents;
+  }
+
+  return {
+    continuation: {
+      context: continuationData || context,
+      token: data[data.length - 1].continuationItemRenderer
+        ? data.pop().continuationItemRenderer.continuationEndpoint
+            .continuationCommand.token
+        : null,
+    },
+    items: data.flatMap(
+      (i) =>
+        i.itemSectionRenderer.contents[0].shelfRenderer.content.gridRenderer
+          .items
+    ),
+  };
+}
+
 async function sha1hash(data) {
   return [
     ...new Uint8Array(
