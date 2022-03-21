@@ -8,7 +8,13 @@ const loader = document.getElementById("loader"),
   headerReducer = (a, i) => {
     a[i.name] = i.value;
     return a;
-  };
+  },
+  preloadImage = (url) =>
+    new Promise((resolve) => {
+      let img = new Image();
+      img.onload = resolve;
+      img.src = url;
+    });
 
 let SAPISID = null;
 
@@ -75,16 +81,7 @@ document.body.onclick = (e) => {
 async function loadUserData(users) {
   await Promise.all(
     users.map((user) =>
-      Promise.all(
-        user.accounts.map(
-          (account) =>
-            new Promise((resolve) => {
-              let img = new Image();
-              img.onload = resolve;
-              img.src = account.icon;
-            })
-        )
-      )
+      Promise.all(user.accounts.map((account) => preloadImage(account.icon)))
     )
   );
 
@@ -274,6 +271,7 @@ async function load() {
       })
       .then(loadUserData),
     document.fonts.load("14px Roboto"),
+    preloadImage("adduser.svg"),
     browser.cookies
       .get({
         url: "https://youtube.com",
