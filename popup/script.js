@@ -4,6 +4,7 @@ const loader = document.getElementById("loader"),
   userList = document.getElementById("userList"),
   userSelect = document.getElementById("userSelect"),
   sortActive = (a, b) => (a.active ? -1 : b.active ? 1 : 0);
+let SAPISID = null;
 
 function hideUserlist() {
   userList.innerHTML = "";
@@ -58,7 +59,6 @@ async function loadUserData(users) {
     )
   );
 
-
   activeIcon.src = users[0].accounts[0].icon;
   activeIcon.onclick = () => showUserlist(users);
 }
@@ -104,7 +104,7 @@ async function sha1hash(data) {
     .join("");
 }
 
-async function apiAuthHeader(SAPISID) {
+async function apiAuthHeader() {
   let timestamp = Math.floor(new Date().getTime() / 1000);
   return `SAPISIDHASH ${timestamp}_${await sha1hash(
     timestamp + " " + SAPISID + " https://www.youtube.com"
@@ -116,7 +116,6 @@ async function internalApiRequest(endpoint, body, context) {
     `https://www.youtube.com/youtubei/v1/${endpoint}?key=${context.key}`,
     {
       headers: {
-        Authentication: apiAuthHeader(context.SAPISID),
       },
       body: {
         context: {
@@ -212,9 +211,8 @@ async function load() {
         url: "https://youtube.com",
         name: "SAPISID",
       })
-      .then((cookie) => (context.SAPISID = cookie.value)),
+      .then((cookie) => (SAPISID = cookie.value)),
   ]);
-
 
   loader.style.visibility = "hidden";
   content.style.visibility = "visible";
