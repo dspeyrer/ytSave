@@ -101,7 +101,7 @@ function changeUser(endpoint) {
 }
 
 async function getYoutubeData(url) {
-  let data = await fetch("https://youtube.com" + url, {
+  let data = await fetch("https://www.youtube.com/" + url, {
     credentials: "include",
   }).then((res) => res.text());
 
@@ -113,11 +113,7 @@ async function getYoutubeData(url) {
   };
 }
 
-async function getInternalApiParams(url) {
-  let data = await fetch("https://youtube.com/", {
-    credentials: "include",
-  }).then((res) => res.text());
-
+function getInternalApiParams(data) {
   return data
     .match(/(?<=ytcfg\.set\({).*?(?=}\);)/gs)
     .map((i) => JSON.parse("{" + i + "}"))
