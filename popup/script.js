@@ -118,7 +118,27 @@ async function internalApiRequest(method, endpoint, body, context) {
   return await fetch(
     `https://www.youtube.com/youtubei/${context.INNERTUBE_API_VERSION}/${endpoint}?key=${context.INNERTUBE_API_KEY}&prettyPrint=false`,
     {
+      mode: "same-origin",
       headers: {
+        Accept: "*/*",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Content-Type": "application/json",
+        "X-Goog-Visitor-Id": context.INNERTUBE_CONTEXT.client.visitorData,
+        "X-Youtube-Client-Name": context.INNERTUBE_CONTEXT_CLIENT_NAME,
+        "X-Youtube-Client-Version": context.INNERTUBE_CONTEXT_CLIENT_VERSION,
+        Authorization: await apiAuthHeader(),
+        "X-Goog-AuthUser": context.SESSION_INDEX,
+        "X-Origin": "https://www.youtube.com",
+        "X-Goog-PageId": context.DELEGATED_SESSION_ID,
+        "Alt-Used": "www.youtube.com",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "no-cors",
+        "Sec-Fetch-Site": "same-origin",
+        Pragma: "no-cache",
+        "Cache-Control": "no-cache",
+        [headerPrefix + "Referer"]:
+          "https://www.youtube.com/feed/subscriptions",
+        [headerPrefix + "Origin"]: "https://www.youtube.com",
       },
       body: JSON.stringify({
         context: context.INNERTUBE_CONTEXT,
@@ -128,10 +148,6 @@ async function internalApiRequest(method, endpoint, body, context) {
       mode: "cors",
     }
   ).then((res) => res.json());
-
-  console.info(data);
-
-  return data.status;
 }
 
 async function login(addAcc = false) {
