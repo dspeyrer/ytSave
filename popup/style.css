@@ -1,5 +1,29 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #181818;
+    --background-secondary: #212121;
+    --text: #ffffff;
+    --hover: #ffffff4d;
+    --subtitle-text: #aaaaaa;
+  }
+
+  #addNew img {
+    filter: invert();
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: #f9f9f9;
+    --background-secondary: #fff;
+    --text: #000000;
+    --hover: rgba(0, 0, 0, 0.2);
+    --subtitle-text: #606060;
+  }
+}
+
 html,
 body {
   width: 400px;
@@ -7,6 +31,17 @@ body {
   margin: 0;
   font-family: "Roboto";
   font-size: 14px;
+  background-color: var(--background);
+  color: var(--text);
+}
+
+#activeIcon,
+#userList,
+#loadingContainer,
+#content {
+  --transition: opacity 0.2s;
+  position: fixed;
+  transition: var(--transition);
 }
 
 #addNew {
@@ -22,6 +57,7 @@ body {
 #userList .email {
   position: relative;
   display: block;
+  cursor: default;
 }
 
 #loadingContainer {
@@ -33,10 +69,14 @@ body {
 }
 
 #activeIcon {
-  position: fixed;
   top: 15px;
   right: 15px;
   cursor: pointer;
+  transition: box-shadow 0.2s, var(--transition);
+}
+
+#activeIcon:hover {
+  box-shadow: 0px 0px 3px 2px var(--hover);
 }
 
 .icon {
@@ -55,6 +95,11 @@ body {
     "icon subtitle";
   width: 200px;
   cursor: pointer;
+  transition: background 0.1s 0s ease-in-out;
+}
+
+.user:hover {
+  background: var(--hover);
 }
 
 .user .icon {
@@ -73,55 +118,20 @@ body {
   align-self: end;
 }
 .user .subtitle {
+  color: var(--subtitle-text);
   grid-area: subtitle;
   align-self: start;
 }
 
 #userList {
   border-radius: 5px;
-  position: fixed;
   top: 10px;
   right: 10px;
   padding: 5px 0px;
+  background: var(--background-secondary);
+  box-shadow: 0px 0px 5px 1px var(--hover);
 }
 
 #userList > * {
   padding: 5px 10px;
-}
-
-@media (prefers-color-scheme: dark) {
-  html,
-  body {
-    background-color: #181818;
-    color: white;
-  }
-
-  #addNew img {
-    filter: invert();
-  }
-
-  #activeIcon:hover {
-    box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, 0.3);
-  }
-
-  #userList .user:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
-
-  #userList {
-    background: #181818;
-    border: rgba(255, 255, 255, 0.3) solid 1px;
-  }
-
-  .user .subtitle {
-    color: rgb(170, 170, 170);
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  html,
-  body {
-    background-color: #f9f9f9;
-    color: black;
-  }
 }
