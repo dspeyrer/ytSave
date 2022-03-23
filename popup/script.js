@@ -38,7 +38,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(
     return { requestHeaders };
   },
   {
-    urls: ["*://*.youtube.com/*"],
+    urls: ["https://www.youtube.com/youtubei/v1/*"],
   },
   ["requestHeaders", "blocking"]
 );
@@ -183,7 +183,7 @@ async function apiAuthHeader() {
 
 async function internalApiRequest(method, endpoint, body, context) {
   return await fetch(
-    `https://www.youtube.com/youtubei/${context.INNERTUBE_API_VERSION}/${endpoint}?key=${context.INNERTUBE_API_KEY}&prettyPrint=false`,
+    `https://www.youtube.com/youtubei/v1/${endpoint}?key=${context.INNERTUBE_API_KEY}&prettyPrint=false`,
     {
       mode: "same-origin",
       headers: {

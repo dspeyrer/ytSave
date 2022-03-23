@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "permissions": [
     "storage",
-    "https://*.youtube.com/*",
+    "https://www.youtube.com/*",
     "cookies",
     "webRequest",
     "webRequestBlocking"
