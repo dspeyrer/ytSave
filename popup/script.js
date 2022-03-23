@@ -1,4 +1,4 @@
-const loader = document.getElementById("loader"),
+const loader = document.getElementById("loadingContainer"),
   content = document.getElementById("content"),
   activeIcon = document.getElementById("activeIcon"),
   userList = document.getElementById("userList"),
@@ -42,8 +42,8 @@ browser.webRequest.onBeforeSendHeaders.addListener(
 );
 
 function hideUserlist() {
-  userList.innerHTML = "";
-  userList.style.visibility = "hidden";
+  userList.style.opacity = 0;
+  activeIcon.style.opacity = 1;
 }
 
 function showUserlist(users) {
@@ -71,7 +71,8 @@ function showUserlist(users) {
   addAccount.innerHTML = `<img src="adduser.svg" /> Add another account`;
   addAccount.onclick = () => login(true);
   userList.appendChild(addAccount);
-  userList.style.visibility = "visible";
+  userList.style.opacity = 1;
+  activeIcon.style.opacity = 0;
 }
 
 document.body.onclick = (e) => {
@@ -90,9 +91,8 @@ async function loadUserData(users) {
 }
 
 function changeUser(endpoint) {
-  loader.style.visibility = "visible";
-  content.style.visibility = "hidden";
-  userList.style.visibility = "hidden";
+  loader.style.opacity = 1;
+  content.style.opacity = 0;
   hideUserlist();
   fetch(endpoint).then(load);
 }
@@ -224,6 +224,7 @@ async function getUsers() {
   let res = await fetch("https://www.youtube.com/getAccountSwitcherEndpoint", {
     credentials: "include",
   });
+
   let resBody = await res.text();
   return JSON.parse(resBody.slice(5))
     .data.actions[0].getMultiPageMenuAction.menu.multiPageMenuRenderer.sections.map(
@@ -280,8 +281,8 @@ async function load() {
       .then((cookie) => (SAPISID = cookie.value)),
   ]);
 
-  loader.style.visibility = "hidden";
-  content.style.visibility = "visible";
+  loader.style.opacity = 0;
+  content.style.opacity = 1;
 }
 
 load();
