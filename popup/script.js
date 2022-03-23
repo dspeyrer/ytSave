@@ -14,7 +14,9 @@ const loader = document.getElementById("loadingContainer"),
       let img = new Image();
       img.onload = resolve;
       img.src = url;
-    });
+    }),
+  cssToMs = ({ value, unit }) =>
+    unit == "ms" ? parseFloat(value) : parseFloat(value) * 1000;
 
 let SAPISID = null;
 
@@ -44,6 +46,10 @@ browser.webRequest.onBeforeSendHeaders.addListener(
 function hideUserlist() {
   userList.style.opacity = 0;
   activeIcon.style.opacity = 1;
+  setTimeout(
+    () => (userList.innerHTML = ""),
+    cssToMs(content.computedStyleMap().get("transition-duration"))
+  );
 }
 
 function showUserlist(users) {
