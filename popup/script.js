@@ -38,9 +38,9 @@ browser.webRequest.onBeforeSendHeaders.addListener(
     return { requestHeaders };
   },
   {
-    urls: ["https://www.youtube.com/youtubei/v1/*"],
+    urls: ["https://www.youtube.com/*"],
   },
-  ["requestHeaders", "blocking"]
+  ["requestHeaders", "blocking", "extraHeaders"]
 );
 
 function hideUserlist() {
@@ -100,7 +100,11 @@ function changeUser(endpoint) {
   loader.style.opacity = 1;
   content.style.opacity = 0;
   hideUserlist();
-  fetch(endpoint).then(load);
+  fetch(endpoint, {
+    headers: {
+      [headerPrefix + "Origin"]: "https://www.youtube.com",
+    },
+  }).then(load);
 }
 
 async function getYoutubeData(url) {
@@ -250,7 +254,7 @@ async function getUsers() {
             name: accountItem.accountName.simpleText,
             icon: accountItem.accountPhoto.thumbnails[0].url,
             endpoint:
-              "https://youtube.com" +
+              "https://www.youtube.com" +
               accountItem.serviceEndpoint.selectActiveIdentityEndpoint.supportedTokens.reduce(
                 (a, i) => {
                   return { ...a, ...i };
@@ -281,7 +285,7 @@ async function load() {
     preloadImage("adduser.svg"),
     browser.cookies
       .get({
-        url: "https://youtube.com",
+        url: "https://www.youtube.com",
         name: "SAPISID",
       })
       .then((cookie) => (SAPISID = cookie.value)),
