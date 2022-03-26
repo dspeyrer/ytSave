@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "target": "es6"
+  },
   "typeAcquisition": {
     "include": ["firefox-webext-browser"]
   }
