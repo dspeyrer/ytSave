@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/webextension.json",
   "manifest_version": 2,
   "name": "ytSave",
   "description": "Add YouTube subscriptions to Watch Later",

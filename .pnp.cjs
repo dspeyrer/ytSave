@@ -35,16 +35,229 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {
           "packageLocation": "./",
           "packageDependencies": [
-            ["@types/firefox-webext-browser", "npm:94.0.1"]
+            ["@types/webextension-polyfill", "npm:0.8.3"],
+            ["external-svg-loader", "npm:1.4.0"],
+            ["ts-node", "virtual:0a5a745b5ae9588d7100029427f65316b755bab4021ee4d455bcfd49bccefa952a6f90dc9fcadcb615af665b4e841a16d93c7bc387738d5eadee358ffb3a276d#npm:10.7.0"],
+            ["typescript", "patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=493e53"],
+            ["webextension-polyfill", "npm:0.9.0"]
           ],
           "linkType": "SOFT",
         }]
       ]],
-      ["@types/firefox-webext-browser", [
-        ["npm:94.0.1", {
-          "packageLocation": "../../.yarn/berry/cache/@types-firefox-webext-browser-npm-94.0.1-d2c8d21b1e-8.zip/node_modules/@types/firefox-webext-browser/",
+      ["@cspotcode/source-map-consumer", [
+        ["npm:0.8.0", {
+          "packageLocation": "../../.yarn/berry/cache/@cspotcode-source-map-consumer-npm-0.8.0-1f37e9e72b-8.zip/node_modules/@cspotcode/source-map-consumer/",
           "packageDependencies": [
-            ["@types/firefox-webext-browser", "npm:94.0.1"]
+            ["@cspotcode/source-map-consumer", "npm:0.8.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@cspotcode/source-map-support", [
+        ["npm:0.7.0", {
+          "packageLocation": "../../.yarn/berry/cache/@cspotcode-source-map-support-npm-0.7.0-456c3ea2ce-8.zip/node_modules/@cspotcode/source-map-support/",
+          "packageDependencies": [
+            ["@cspotcode/source-map-support", "npm:0.7.0"],
+            ["@cspotcode/source-map-consumer", "npm:0.8.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@tsconfig/node10", [
+        ["npm:1.0.8", {
+          "packageLocation": "../../.yarn/berry/cache/@tsconfig-node10-npm-1.0.8-90a8cce25d-8.zip/node_modules/@tsconfig/node10/",
+          "packageDependencies": [
+            ["@tsconfig/node10", "npm:1.0.8"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@tsconfig/node12", [
+        ["npm:1.0.9", {
+          "packageLocation": "../../.yarn/berry/cache/@tsconfig-node12-npm-1.0.9-780563856d-8.zip/node_modules/@tsconfig/node12/",
+          "packageDependencies": [
+            ["@tsconfig/node12", "npm:1.0.9"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@tsconfig/node14", [
+        ["npm:1.0.1", {
+          "packageLocation": "../../.yarn/berry/cache/@tsconfig-node14-npm-1.0.1-3ecac58e68-8.zip/node_modules/@tsconfig/node14/",
+          "packageDependencies": [
+            ["@tsconfig/node14", "npm:1.0.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@tsconfig/node16", [
+        ["npm:1.0.2", {
+          "packageLocation": "../../.yarn/berry/cache/@tsconfig-node16-npm-1.0.2-1f43ab567a-8.zip/node_modules/@tsconfig/node16/",
+          "packageDependencies": [
+            ["@tsconfig/node16", "npm:1.0.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@types/webextension-polyfill", [
+        ["npm:0.8.3", {
+          "packageLocation": "../../.yarn/berry/cache/@types-webextension-polyfill-npm-0.8.3-f16fe93f27-8.zip/node_modules/@types/webextension-polyfill/",
+          "packageDependencies": [
+            ["@types/webextension-polyfill", "npm:0.8.3"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["acorn", [
+        ["npm:8.7.0", {
+          "packageLocation": "../../.yarn/berry/cache/acorn-npm-8.7.0-ca81d350ee-8.zip/node_modules/acorn/",
+          "packageDependencies": [
+            ["acorn", "npm:8.7.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["acorn-walk", [
+        ["npm:8.2.0", {
+          "packageLocation": "../../.yarn/berry/cache/acorn-walk-npm-8.2.0-2f2cac3177-8.zip/node_modules/acorn-walk/",
+          "packageDependencies": [
+            ["acorn-walk", "npm:8.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["arg", [
+        ["npm:4.1.3", {
+          "packageLocation": "../../.yarn/berry/cache/arg-npm-4.1.3-1748b966a8-8.zip/node_modules/arg/",
+          "packageDependencies": [
+            ["arg", "npm:4.1.3"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["create-require", [
+        ["npm:1.1.1", {
+          "packageLocation": "../../.yarn/berry/cache/create-require-npm-1.1.1-839884ca2e-8.zip/node_modules/create-require/",
+          "packageDependencies": [
+            ["create-require", "npm:1.1.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["diff", [
+        ["npm:4.0.2", {
+          "packageLocation": "../../.yarn/berry/cache/diff-npm-4.0.2-73133c7102-8.zip/node_modules/diff/",
+          "packageDependencies": [
+            ["diff", "npm:4.0.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["external-svg-loader", [
+        ["npm:1.4.0", {
+          "packageLocation": "../../.yarn/berry/cache/external-svg-loader-npm-1.4.0-e882f46002-8.zip/node_modules/external-svg-loader/",
+          "packageDependencies": [
+            ["external-svg-loader", "npm:1.4.0"],
+            ["idb-keyval", "npm:3.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["idb-keyval", [
+        ["npm:3.2.0", {
+          "packageLocation": "../../.yarn/berry/cache/idb-keyval-npm-3.2.0-8f62d90403-8.zip/node_modules/idb-keyval/",
+          "packageDependencies": [
+            ["idb-keyval", "npm:3.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["make-error", [
+        ["npm:1.3.6", {
+          "packageLocation": "../../.yarn/berry/cache/make-error-npm-1.3.6-ccb85d9458-8.zip/node_modules/make-error/",
+          "packageDependencies": [
+            ["make-error", "npm:1.3.6"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["ts-node", [
+        ["npm:10.7.0", {
+          "packageLocation": "../../.yarn/berry/cache/ts-node-npm-10.7.0-ef39b1d45e-8.zip/node_modules/ts-node/",
+          "packageDependencies": [
+            ["ts-node", "npm:10.7.0"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:0a5a745b5ae9588d7100029427f65316b755bab4021ee4d455bcfd49bccefa952a6f90dc9fcadcb615af665b4e841a16d93c7bc387738d5eadee358ffb3a276d#npm:10.7.0", {
+          "packageLocation": "./.yarn/__virtual__/ts-node-virtual-9845c2639d/3/.yarn/berry/cache/ts-node-npm-10.7.0-ef39b1d45e-8.zip/node_modules/ts-node/",
+          "packageDependencies": [
+            ["ts-node", "virtual:0a5a745b5ae9588d7100029427f65316b755bab4021ee4d455bcfd49bccefa952a6f90dc9fcadcb615af665b4e841a16d93c7bc387738d5eadee358ffb3a276d#npm:10.7.0"],
+            ["@cspotcode/source-map-support", "npm:0.7.0"],
+            ["@swc/core", null],
+            ["@swc/wasm", null],
+            ["@tsconfig/node10", "npm:1.0.8"],
+            ["@tsconfig/node12", "npm:1.0.9"],
+            ["@tsconfig/node14", "npm:1.0.1"],
+            ["@tsconfig/node16", "npm:1.0.2"],
+            ["@types/node", null],
+            ["@types/swc__core", null],
+            ["@types/swc__wasm", null],
+            ["@types/typescript", null],
+            ["acorn", "npm:8.7.0"],
+            ["acorn-walk", "npm:8.2.0"],
+            ["arg", "npm:4.1.3"],
+            ["create-require", "npm:1.1.1"],
+            ["diff", "npm:4.0.2"],
+            ["make-error", "npm:1.3.6"],
+            ["typescript", "patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=493e53"],
+            ["v8-compile-cache-lib", "npm:3.0.0"],
+            ["yn", "npm:3.1.1"]
+          ],
+          "packagePeers": [
+            "@swc/core",
+            "@swc/wasm",
+            "@types/node",
+            "@types/swc__core",
+            "@types/swc__wasm",
+            "@types/typescript",
+            "typescript"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["typescript", [
+        ["patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=493e53", {
+          "packageLocation": "../../.yarn/berry/cache/typescript-patch-5a659a49c9-8.zip/node_modules/typescript/",
+          "packageDependencies": [
+            ["typescript", "patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=493e53"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["v8-compile-cache-lib", [
+        ["npm:3.0.0", {
+          "packageLocation": "../../.yarn/berry/cache/v8-compile-cache-lib-npm-3.0.0-82045dda32-8.zip/node_modules/v8-compile-cache-lib/",
+          "packageDependencies": [
+            ["v8-compile-cache-lib", "npm:3.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["webextension-polyfill", [
+        ["npm:0.9.0", {
+          "packageLocation": "../../.yarn/berry/cache/webextension-polyfill-npm-0.9.0-59e5846f45-8.zip/node_modules/webextension-polyfill/",
+          "packageDependencies": [
+            ["webextension-polyfill", "npm:0.9.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["yn", [
+        ["npm:3.1.1", {
+          "packageLocation": "../../.yarn/berry/cache/yn-npm-3.1.1-8ad4259784-8.zip/node_modules/yn/",
+          "packageDependencies": [
+            ["yn", "npm:3.1.1"]
           ],
           "linkType": "HARD",
         }]
@@ -54,7 +267,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",
           "packageDependencies": [
             ["ytsave", "workspace:."],
-            ["@types/firefox-webext-browser", "npm:94.0.1"]
+            ["@types/webextension-polyfill", "npm:0.8.3"],
+            ["external-svg-loader", "npm:1.4.0"],
+            ["ts-node", "virtual:0a5a745b5ae9588d7100029427f65316b755bab4021ee4d455bcfd49bccefa952a6f90dc9fcadcb615af665b4e841a16d93c7bc387738d5eadee358ffb3a276d#npm:10.7.0"],
+            ["typescript", "patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=493e53"],
+            ["webextension-polyfill", "npm:0.9.0"]
           ],
           "linkType": "SOFT",
         }]

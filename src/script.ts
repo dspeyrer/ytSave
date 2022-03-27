@@ -1,34 +1,77 @@
-const loader = document.getElementById("loadingContainer"),
-  content = document.getElementById("content"),
-  activeIcon = document.getElementById("activeIcon"),
-  userList = document.getElementById("userList"),
-  userSelect = document.getElementById("userSelect"),
+import "external-svg-loader";
+
+// @ts-ignore
+import browser, {WebRequest, Cookies} from "webextension-polyfill";
+
+import HttpHeadersItemType = WebRequest.HttpHeadersItemType;
+import OnBeforeSendHeadersDetailsType = WebRequest.OnBeforeSendHeadersDetailsType;
+import BlockingResponse = WebRequest.BlockingResponse;
+import Cookie = Cookies.Cookie;
+
+interface User {
+  email: string;
+  active: boolean;
+  accounts: Account[];
+}
+
+interface Account {
+  active: boolean;
+  name: string;
+  icon: string;
+  endpoint: string;
+  byline: string;
+}
+
+interface AnyObj {
+  [key: string]: any;
+}
+
+interface YoutubeData {
+  initialData: AnyObj
+  context: AnyObj
+}
+
+interface YoutubeVideo {
+
+}
+
+interface YoutubeSubscriptionsFeedData {
+  items: YoutubeVideo[];
+  token: string;
+}
+
+interface YoutubeSubscriptionsFeed extends YoutubeSubscriptionsFeedData {
+  etc?: AnyObj
+}
+
+const loader = document.getElementById("loadingContainer")!,
+  content = document.getElementById("content")!,
+  activeIcon = document.getElementById("activeIcon") as HTMLImageElement,
+  userList = document.getElementById("userList")!,
+  userSelect = document.getElementById("userSelect")!,
   headerPrefix = "__YTSAVE_HEADER_" + Math.random().toString(36).slice(2) + "_",
-  sortActive = (a, b) => (a.active ? -1 : b.active ? 1 : 0),
-  headerReducer = (a, i) => {
-    a[i.name] = i.value;
-    return a;
-  },
-  preloadImage = (url) =>
+  sortActive = (a: Account | User, b: Account | User): number => (a.active ? -1 : b.active ? 1 : 0),
+  preloadImage = (url: string): Promise<Event> =>
     new Promise((resolve) => {
       let img = new Image();
       img.onload = resolve;
       img.src = url;
     }),
-  cssToMs = ({ value, unit }) =>
-    unit == "ms" ? parseFloat(value) : parseFloat(value) * 1000;
+  cssToMs = (duration: string): number => {
+    return duration.includes("m") ? parseFloat(duration) * 1000 : parseFloat(duration);
+  };
 
-let SAPISID = null;
+let SAPISID: string;
 
 browser.webRequest.onBeforeSendHeaders.addListener(
-  ({ requestHeaders }) => {
+  ({ requestHeaders }: OnBeforeSendHeadersDetailsType): BlockingResponse => {
     requestHeaders
-      .filter((i) => i.name.startsWith(headerPrefix))
-      .forEach((i) => {
+      .filter((i: HttpHeadersItemType) => i.name.startsWith(headerPrefix))
+      .forEach((i: HttpHeadersItemType) => {
         let name = i.name.replace(headerPrefix, "");
 
         requestHeaders = requestHeaders.filter(
-          (j) =>
+          (j: HttpHeadersItemType) =>
             j.name.toLowerCase() != name.toLowerCase() &&
             j.name.toLowerCase() != i.name.toLowerCase()
         );
@@ -43,26 +86,26 @@ browser.webRequest.onBeforeSendHeaders.addListener(
   ["requestHeaders", "blocking", "extraHeaders"]
 );
 
-function hideUserlist() {
-  userList.style.opacity = 0;
-  activeIcon.style.opacity = 1;
+function hideUserlist(): void {
+  userList.style.opacity = "0";
+  activeIcon.style.opacity = "1";
   setTimeout(
     () => (userList.innerHTML = ""),
-    cssToMs(content.computedStyleMap().get("transition-duration"))
+    cssToMs(getComputedStyle(content).transitionDuration)
   );
 }
 
-function showUserlist(users) {
-  users.forEach((i) => {
+function showUserlist(users: User[]): void {
+  users.forEach((i: User) => {
     let email = document.createElement("span");
     email.className = "email";
     email.innerHTML = i.email;
     userList.appendChild(email);
-    i.accounts.forEach((j) => {
+    i.accounts.forEach((j: Account) => {
       let el = document.createElement("div");
       el.className = "user";
       el.onclick = j.active ? hideUserlist : () => changeUser(j.endpoint);
-      el.innerHTML = `<img class="icon" src="${j.icon}"/>
+      el.innerHTML = `<img class="icon" src="${j.icon}" alt="User icon"/>
           <div class="name">${j.name}</div>
           <div class="subtitle">
             ${j.byline}
@@ -74,21 +117,21 @@ function showUserlist(users) {
   let addAccount = document.createElement("div");
   addAccount.id = "addNew";
   addAccount.className = "user";
-  addAccount.innerHTML = `<img src="adduser.svg" /> Add another account`;
+  addAccount.innerHTML = `<img src="adduser.svg" alt="Add user icon" /> Add another account`;
   addAccount.onclick = () => login(true);
   userList.appendChild(addAccount);
-  userList.style.opacity = 1;
-  activeIcon.style.opacity = 0;
+  userList.style.opacity = "1";
+  activeIcon.style.opacity = "0";
 }
 
 document.body.onclick = (e) => {
-  if (!userSelect.contains(e.target)) hideUserlist();
+  if (!userSelect.contains(e.target as Node)) hideUserlist();
 };
 
-async function loadUserData(users) {
+async function loadUserData(users: User[]): Promise<void> {
   await Promise.all(
-    users.map((user) =>
-      Promise.all(user.accounts.map((account) => preloadImage(account.icon)))
+    users.map((user: User) =>
+      Promise.all(user.accounts.map((account: Account) => preloadImage(account.icon)))
     )
   );
 
@@ -96,9 +139,9 @@ async function loadUserData(users) {
   activeIcon.onclick = () => showUserlist(users);
 }
 
-function changeUser(endpoint) {
-  loader.style.opacity = 1;
-  content.style.opacity = 0;
+function changeUser(endpoint: string): void {
+  loader.style.opacity = "1";
+  content.style.opacity = "0";
   hideUserlist();
   fetch(endpoint, {
     headers: {
@@ -107,7 +150,7 @@ function changeUser(endpoint) {
   }).then(load);
 }
 
-async function getYoutubeData(url) {
+async function getYoutubeData(url: string): Promise<YoutubeData> {
   let data = await fetch("https://www.youtube.com/" + url, {
     credentials: "include",
   }).then((res) => res.text());
@@ -120,55 +163,56 @@ async function getYoutubeData(url) {
   };
 }
 
-function getInternalApiParams(data) {
+function getInternalApiParams(data: string): YoutubeData["context"] {
   return data
-    .match(/(?<=ytcfg\.set\({).*?(?=}\);)/gs)
+    .match(/(?<=ytcfg\.set\({).*?(?=}\);)/gs)!
     .map((i) => JSON.parse("{" + i + "}"))
     .reduce((a, i) => {
       return { ...a, ...i };
     }, {});
 }
 
-async function getSubscriptionsFeed(continuation, context) {
-  let data, continuationData;
-  if (continuation) {
-    let response = await internalApiRequest(
-      "POST",
-      "browse",
-      {
-        continuation,
-      },
-      context
-    );
-
-    data =
-      response.onResponseReceivedActions[0].appendContinuationItemsAction
-        .continuationItems;
-  } else {
-    let response = await getYoutubeData("feed/subscriptions");
-    continuationData = response.context;
-    data =
-      response.initialData.contents.twoColumnBrowseResultsRenderer.tabs[0]
-        .tabRenderer.content.sectionListRenderer.contents;
-  }
-
+function parseSubscriptionsFeed(data: AnyObj): YoutubeSubscriptionsFeedData {
   return {
-    continuation: {
-      context: continuationData || context,
-      token: data[data.length - 1].continuationItemRenderer
-        ? data.pop().continuationItemRenderer.continuationEndpoint
-            .continuationCommand.token
-        : null,
-    },
+    token: data[data.length - 1].continuationItemRenderer ? data.pop().continuationItemRenderer.continuationEndpoint
+        .continuationCommand.token : null,
     items: data.flatMap(
-      (i) =>
-        i.itemSectionRenderer.contents[0].shelfRenderer.content.gridRenderer
-          .items
-    ),
-  };
+        (i: AnyObj) => i.itemSectionRenderer.contents[0].shelfRenderer.content.gridRenderer
+            .items)
+  }
 }
 
-async function sha1hash(data) {
+async function getSubscriptionsFeed(token?: string, context?: AnyObj): Promise<YoutubeSubscriptionsFeed> {
+  if (token && context) {
+    let response = await internalApiRequest(
+        "POST",
+        "browse",
+        {
+          continuation: token,
+        },
+        context
+    );
+    let data =
+        response.onResponseReceivedActions[0].appendContinuationItemsAction
+            .continuationItems;
+    return parseSubscriptionsFeed(data);
+  }
+  else {
+    let response = await getYoutubeData("feed/subscriptions");
+    let data = response.initialData.contents.twoColumnBrowseResultsRenderer.tabs[0]
+        .tabRenderer.content.sectionListRenderer.contents;
+
+    return {
+      ...parseSubscriptionsFeed(data),
+      etc: {
+        userIcon: response.initialData.topbar.desktopTopbarRenderer.topbarButtons.pop().topbarMenuButtonRenderer.avatar.thumbnails[0].url,
+        context: response.context
+      }
+    };
+  }
+}
+
+async function sha1hash(data: string): Promise<string> {
   return [
     ...new Uint8Array(
       await crypto.subtle.digest("SHA-1", new TextEncoder().encode(data))
@@ -185,11 +229,10 @@ async function apiAuthHeader() {
   )}`;
 }
 
-async function internalApiRequest(method, endpoint, body, context) {
+async function internalApiRequest(method: string, endpoint: string, body: AnyObj, context: AnyObj): Promise<AnyObj> {
   return await fetch(
     `https://www.youtube.com/youtubei/v1/${endpoint}?key=${context.INNERTUBE_API_KEY}&prettyPrint=false`,
     {
-      mode: "same-origin",
       headers: {
         Accept: "*/*",
         "Accept-Language": "en-US,en;q=0.5",
@@ -216,7 +259,7 @@ async function internalApiRequest(method, endpoint, body, context) {
         ...body,
       }),
       method,
-      mode: "cors",
+      mode: "same-origin",
     }
   ).then((res) => res.json());
 }
@@ -230,24 +273,24 @@ async function login(addAcc = false) {
   window.close();
 }
 
-async function getUsers() {
+async function getUsers(): Promise<User[]> {
   let res = await fetch("https://www.youtube.com/getAccountSwitcherEndpoint", {
     credentials: "include",
   });
 
   let resBody = await res.text();
-  return JSON.parse(resBody.slice(5))
+  return (JSON.parse(resBody.slice(5))
     .data.actions[0].getMultiPageMenuAction.menu.multiPageMenuRenderer.sections.map(
-      (i) => i.accountSectionListRenderer
-    )
-    .map((i, index) => {
+      (i: AnyObj) => i.accountSectionListRenderer
+    ) as Array<AnyObj>)
+    .map((i: AnyObj, index: number) => {
       let email = index
         ? i.contents[0].accountItemSectionRenderer.header
             .accountItemSectionHeaderRenderer.title.runs[0].text
         : i.header.googleAccountHeaderRenderer.email.simpleText;
 
-      accounts = i.contents[0].accountItemSectionRenderer.contents;
-      accounts = (index ? accounts : accounts.slice(0, accounts.length - 1))
+      let accounts = i.contents[0].accountItemSectionRenderer.contents;
+      accounts = (((index ? accounts : accounts.slice(0, accounts.length - 1)) as Array<AnyObj>)
         .map(({ accountItem }) => {
           return {
             active: accountItem.isSelected,
@@ -256,18 +299,18 @@ async function getUsers() {
             endpoint:
               "https://www.youtube.com" +
               accountItem.serviceEndpoint.selectActiveIdentityEndpoint.supportedTokens.reduce(
-                (a, i) => {
+                (a: AnyObj, i: AnyObj) => {
                   return { ...a, ...i };
                 },
                 {}
               ).accountSigninToken.signinUrl,
             byline: accountItem.accountByline.simpleText,
           };
-        })
+        }) as Account[])
         .sort(sortActive);
       return {
         email,
-        active: !!accounts.find((i) => i.active),
+        active: !!accounts.find((i: Account) => i.active),
         accounts,
       };
     })
@@ -279,6 +322,7 @@ async function load() {
     getUsers()
       .catch((e) => {
         login();
+        return [];
       })
       .then(loadUserData),
     document.fonts.load("14px Roboto"),
@@ -288,11 +332,11 @@ async function load() {
         url: "https://www.youtube.com",
         name: "SAPISID",
       })
-      .then((cookie) => (SAPISID = cookie.value)),
+      .then((cookie: Cookie) => (SAPISID = cookie.value)),
   ]);
 
-  loader.style.opacity = 0;
-  content.style.opacity = 1;
+  loader.style.opacity = "0";
+  content.style.opacity = "1";
 }
 
-load();
+load().then();
