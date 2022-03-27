@@ -1,7 +1,6 @@
 import "external-svg-loader";
 
-// @ts-ignore
-import browser, {WebRequest, Cookies} from "webextension-polyfill";
+import browser, { WebRequest, Cookies } from "webextension-polyfill";
 
 import HttpHeadersItemType = WebRequest.HttpHeadersItemType;
 import OnBeforeSendHeadersDetailsType = WebRequest.OnBeforeSendHeadersDetailsType;
@@ -27,13 +26,11 @@ interface AnyObj {
 }
 
 interface YoutubeData {
-  initialData: AnyObj
-  context: AnyObj
+  initialData: AnyObj;
+  context: AnyObj;
 }
 
-interface YoutubeVideo {
-
-}
+interface YoutubeVideo {}
 
 interface YoutubeSubscriptionsFeedData {
   items: YoutubeVideo[];
@@ -41,7 +38,7 @@ interface YoutubeSubscriptionsFeedData {
 }
 
 interface YoutubeSubscriptionsFeed extends YoutubeSubscriptionsFeedData {
-  etc?: AnyObj
+  etc?: AnyObj;
 }
 
 const loader = document.getElementById("loadingContainer")!,
@@ -50,7 +47,8 @@ const loader = document.getElementById("loadingContainer")!,
   userList = document.getElementById("userList")!,
   userSelect = document.getElementById("userSelect")!,
   headerPrefix = "__YTSAVE_HEADER_" + Math.random().toString(36).slice(2) + "_",
-  sortActive = (a: Account | User, b: Account | User): number => (a.active ? -1 : b.active ? 1 : 0),
+  sortActive = (a: Account | User, b: Account | User): number =>
+    a.active ? -1 : b.active ? 1 : 0,
   preloadImage = (url: string): Promise<Event> =>
     new Promise((resolve) => {
       let img = new Image();
@@ -58,19 +56,21 @@ const loader = document.getElementById("loadingContainer")!,
       img.src = url;
     }),
   cssToMs = (duration: string): number => {
-    return duration.includes("m") ? parseFloat(duration) * 1000 : parseFloat(duration);
+    return duration.includes("m")
+      ? parseFloat(duration) * 1000
+      : parseFloat(duration);
   };
 
 let SAPISID: string;
 
 browser.webRequest.onBeforeSendHeaders.addListener(
   ({ requestHeaders }: OnBeforeSendHeadersDetailsType): BlockingResponse => {
-    requestHeaders
+    requestHeaders!
       .filter((i: HttpHeadersItemType) => i.name.startsWith(headerPrefix))
       .forEach((i: HttpHeadersItemType) => {
         let name = i.name.replace(headerPrefix, "");
 
-        requestHeaders = requestHeaders.filter(
+        requestHeaders = requestHeaders!.filter(
           (j: HttpHeadersItemType) =>
             j.name.toLowerCase() != name.toLowerCase() &&
             j.name.toLowerCase() != i.name.toLowerCase()
@@ -131,7 +131,9 @@ document.body.onclick = (e) => {
 async function loadUserData(users: User[]): Promise<void> {
   await Promise.all(
     users.map((user: User) =>
-      Promise.all(user.accounts.map((account: Account) => preloadImage(account.icon)))
+      Promise.all(
+        user.accounts.map((account: Account) => preloadImage(account.icon))
+      )
     )
   );
 
@@ -174,40 +176,49 @@ function getInternalApiParams(data: string): YoutubeData["context"] {
 
 function parseSubscriptionsFeed(data: AnyObj): YoutubeSubscriptionsFeedData {
   return {
-    token: data[data.length - 1].continuationItemRenderer ? data.pop().continuationItemRenderer.continuationEndpoint
-        .continuationCommand.token : null,
+    token: data[data.length - 1].continuationItemRenderer
+      ? data.pop().continuationItemRenderer.continuationEndpoint
+          .continuationCommand.token
+      : null,
     items: data.flatMap(
-        (i: AnyObj) => i.itemSectionRenderer.contents[0].shelfRenderer.content.gridRenderer
-            .items)
-  }
+      (i: AnyObj) =>
+        i.itemSectionRenderer.contents[0].shelfRenderer.content.gridRenderer
+          .items
+    ),
+  };
 }
 
-async function getSubscriptionsFeed(token?: string, context?: AnyObj): Promise<YoutubeSubscriptionsFeed> {
+async function getSubscriptionsFeed(
+  token?: string,
+  context?: AnyObj
+): Promise<YoutubeSubscriptionsFeed> {
   if (token && context) {
     let response = await internalApiRequest(
-        "POST",
-        "browse",
-        {
-          continuation: token,
-        },
-        context
+      "POST",
+      "browse",
+      {
+        continuation: token,
+      },
+      context
     );
     let data =
-        response.onResponseReceivedActions[0].appendContinuationItemsAction
-            .continuationItems;
+      response.onResponseReceivedActions[0].appendContinuationItemsAction
+        .continuationItems;
     return parseSubscriptionsFeed(data);
-  }
-  else {
+  } else {
     let response = await getYoutubeData("feed/subscriptions");
-    let data = response.initialData.contents.twoColumnBrowseResultsRenderer.tabs[0]
+    let data =
+      response.initialData.contents.twoColumnBrowseResultsRenderer.tabs[0]
         .tabRenderer.content.sectionListRenderer.contents;
 
     return {
       ...parseSubscriptionsFeed(data),
       etc: {
-        userIcon: response.initialData.topbar.desktopTopbarRenderer.topbarButtons.pop().topbarMenuButtonRenderer.avatar.thumbnails[0].url,
-        context: response.context
-      }
+        userIcon:
+          response.initialData.topbar.desktopTopbarRenderer.topbarButtons.pop()
+            .topbarMenuButtonRenderer.avatar.thumbnails[0].url,
+        context: response.context,
+      },
     };
   }
 }
@@ -229,7 +240,12 @@ async function apiAuthHeader() {
   )}`;
 }
 
-async function internalApiRequest(method: string, endpoint: string, body: AnyObj, context: AnyObj): Promise<AnyObj> {
+async function internalApiRequest(
+  method: string,
+  endpoint: string,
+  body: AnyObj,
+  context: AnyObj
+): Promise<AnyObj> {
   return await fetch(
     `https://www.youtube.com/youtubei/v1/${endpoint}?key=${context.INNERTUBE_API_KEY}&prettyPrint=false`,
     {
@@ -279,10 +295,13 @@ async function getUsers(): Promise<User[]> {
   });
 
   let resBody = await res.text();
-  return (JSON.parse(resBody.slice(5))
-    .data.actions[0].getMultiPageMenuAction.menu.multiPageMenuRenderer.sections.map(
+  return (
+    JSON.parse(
+      resBody.slice(5)
+    ).data.actions[0].getMultiPageMenuAction.menu.multiPageMenuRenderer.sections.map(
       (i: AnyObj) => i.accountSectionListRenderer
-    ) as Array<AnyObj>)
+    ) as Array<AnyObj>
+  )
     .map((i: AnyObj, index: number) => {
       let email = index
         ? i.contents[0].accountItemSectionRenderer.header
@@ -290,8 +309,12 @@ async function getUsers(): Promise<User[]> {
         : i.header.googleAccountHeaderRenderer.email.simpleText;
 
       let accounts = i.contents[0].accountItemSectionRenderer.contents;
-      accounts = (((index ? accounts : accounts.slice(0, accounts.length - 1)) as Array<AnyObj>)
-        .map(({ accountItem }) => {
+      accounts = (
+        (
+          (index
+            ? accounts
+            : accounts.slice(0, accounts.length - 1)) as Array<AnyObj>
+        ).map(({ accountItem }) => {
           return {
             active: accountItem.isSelected,
             name: accountItem.accountName.simpleText,
@@ -306,8 +329,8 @@ async function getUsers(): Promise<User[]> {
               ).accountSigninToken.signinUrl,
             byline: accountItem.accountByline.simpleText,
           };
-        }) as Account[])
-        .sort(sortActive);
+        }) as Account[]
+      ).sort(sortActive);
       return {
         email,
         active: !!accounts.find((i: Account) => i.active),
