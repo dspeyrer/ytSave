@@ -1,7 +1,12 @@
 {
-  "name": "ytsave",
-  "packageManager": "yarn@3.1.1",
-  "devDependencies": {
-    "@types/firefox-webext-browser": "^94.0.1"
+  "name": "ytSave",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/dspeyrer/ytSave.git",
+  "author": "Deven Speyrer <devenspeyrer@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/firefox-webext-browser": "^94.0.1",
+    "webextension-polyfill": "^0.9.0"
   }
 }
