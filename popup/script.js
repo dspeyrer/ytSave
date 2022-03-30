@@ -2,7 +2,7 @@ const loader = document.getElementById("loadingContainer"),
   content = document.getElementById("content"),
   activeIcon = document.getElementById("activeIcon"),
   userList = document.getElementById("userList"),
-  userSelect = document.getElementById("userSelect"),
+  userListWrapper = document.getElementById("userList-wrapper"),
   headerPrefix = "__YTSAVE_HEADER_" + Math.random().toString(36).slice(2) + "_",
   sortActive = (a, b) => (a.active ? -1 : b.active ? 1 : 0),
   headerReducer = (a, i) => {
@@ -15,10 +15,12 @@ const loader = document.getElementById("loadingContainer"),
       img.onload = resolve;
       img.src = url;
     }),
-  cssToMs = ({ value, unit }) =>
-    unit == "ms" ? parseFloat(value) : parseFloat(value) * 1000;
+  cssToMs = (string) => (string.includes("m") ? parseFloat(string) : parseFloat(string) * 1000);
 
-let SAPISID = null;
+let SAPISID,
+  firefox = navigator.userAgent.includes("Firefox/");
+
+activeIcon.onclick = showUserlist;
 
 browser.webRequest.onBeforeSendHeaders.addListener(
   ({ requestHeaders }) => {
@@ -44,12 +46,10 @@ browser.webRequest.onBeforeSendHeaders.addListener(
 );
 
 function hideUserlist() {
-  userList.style.opacity = 0;
-  activeIcon.style.opacity = 1;
-  setTimeout(
-    () => (userList.innerHTML = ""),
-    cssToMs(content.computedStyleMap().get("transition-duration"))
-  );
+  userListWrapper.style.opacity = "0";
+  userListWrapper.style.pointerEvents = "none";
+  activeIcon.style.opacity = "1";
+  setTimeout(() => (userList.innerHTML = ""), cssToMs(getComputedStyle(content).transitionDuration));
 }
 
 function showUserlist(users) {
@@ -77,13 +77,11 @@ function showUserlist(users) {
   addAccount.innerHTML = `<img src="adduser.svg" /> Add another account`;
   addAccount.onclick = () => login(true);
   userList.appendChild(addAccount);
-  userList.style.opacity = 1;
-  activeIcon.style.opacity = 0;
+  userListWrapper.style.opacity = "1";
+  userListWrapper.style.pointerEvents = "auto";
+  activeIcon.style.opacity = "0";
 }
 
-document.body.onclick = (e) => {
-  if (!userSelect.contains(e.target)) hideUserlist();
-};
 
 async function loadUserData(users) {
   await Promise.all(
@@ -95,10 +93,11 @@ async function loadUserData(users) {
   activeIcon.src = users[0].accounts[0].icon;
   activeIcon.onclick = () => showUserlist(users);
 }
+userListWrapper.onclick = hideUserlist;
 
 function changeUser(endpoint) {
-  loader.style.opacity = 1;
-  content.style.opacity = 0;
+  loader.style.opacity = "1";
+  content.style.opacity = "0";
   hideUserlist();
   fetch(endpoint, {
     headers: {

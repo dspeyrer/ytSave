@@ -37,11 +37,20 @@ body {
 
 #activeIcon,
 #userList,
+#userList-wrapper,
 #loadingContainer,
 #content {
   --transition: opacity 0.2s;
   position: fixed;
   transition: var(--transition);
+}
+
+#userList-wrapper {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
 }
 
 #addNew {
@@ -87,13 +96,13 @@ body {
 
 .user {
   display: grid;
-  grid-template-columns: 32px 160px;
+  grid-template-columns: 32px max-content;
+  white-space: nowrap;
   grid-template-rows: 16px 16px;
   gap: 0px 8px;
   grid-template-areas:
     "icon name"
     "icon subtitle";
-  width: 200px;
   cursor: pointer;
   transition: background 0.1s 0s ease-in-out;
 }
@@ -133,7 +142,7 @@ body {
 }
 
 #userList > * {
-  padding: 5px 10px;
+  padding: 5px 15px;
 }
 
 /* Loader code adapted from Material Design's indeterminate loader spinner, using the MIT License*/
