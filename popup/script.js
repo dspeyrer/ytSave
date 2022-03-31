@@ -113,6 +113,49 @@ function getInternalApiParams(data) {
     }, {});
 }
 
+async function editPlaylist(context, input, playlistId = "WL") {
+  await internalApiRequest(
+    "POST",
+    "browse/edit_playlist",
+    {
+      playlistId,
+      actions: (typeof input == "string" ? [input] : Array.isArray(input) ? input : input.add || [])
+        .map((i) => ({
+          addedVideoId: i,
+          action: "ACTION_ADD_VIDEO"
+        }))
+        .concat(
+          (input.remove || []).map((i) => ({
+            removedVideoId: i,
+            action: "ACTION_REMOVE_VIDEO_BY_VIDEO_ID"
+          }))
+        )
+    },
+    context
+  );
+}
+
+async function getPlaylistData(context, videoId) {
+  let data = await internalApiRequest(
+    "POST",
+    "playlist/get_add_to_playlist",
+    {
+      excludeWatchLater: false,
+      videoIds: [videoId]
+    },
+    context
+  );
+
+  return data.contents[0].addToPlaylistRenderer.playlists.map(({ playlistAddToOptionRenderer: i }) => ({
+    id: i.playlistId,
+    name: i.title.simpleText,
+    privacy: i.privacy,
+    hasVideo: i.containsSelectedVideos
+  }));
+}
+
+// async function createPlaylist(context, name, privacy, videoId)
+
 function parseSubscriptionsData(data) {
   return {
     token: data[data.length - 1].continuationItemRenderer
