@@ -8,3 +8,4 @@ dist/js
 !.yarn/versions
 .idea
 .DS_Store
+node_modules
