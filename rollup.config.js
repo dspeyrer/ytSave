@@ -5,7 +5,7 @@ import { terser } from "rollup-plugin-terser";
 export default {
   input: "src/script.js",
   output: {
-    sourcemap: false,
+    sourcemap: true,
     format: "esm",
     file: "dist/js/bundle.js"
   },
