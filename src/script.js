@@ -1,3 +1,5 @@
+import browser from "webextension-polyfill";
+
 const loader = document.getElementById("loadingContainer"),
   content = document.getElementById("content"),
   activeIcon = document.getElementById("activeIcon"),
