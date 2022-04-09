@@ -168,15 +168,21 @@ function parseSubscriptionsData(data) {
           badges = (i.ownerBadges || [])
             .concat(i.badges || [])
             .map((i) => i.metadataBadgeRenderer.style.replace("BADGE_STYLE_TYPE_", "")),
-          live = badges.includes("LIVE_NOW");
+          live = badges.includes("LIVE_NOW"),
+          upcoming = "upcomingEventData" in i;
 
         return {
           id: i.videoId,
           thumbnail: `https://i.ytimg.com/vi/${i.videoId}/maxresdefault.jpg`,
           title: i.title.runs[0].text,
           live,
-          published: live ? null : i.publishedTimeText.simpleText,
-          viewCount: live ? i.viewCountText.runs.reduce((a, i) => a + i.text, "") : i.viewCountText.simpleText,
+          scheduled: upcoming ? i.upcomingEventData.startTime : false,
+          published: live || upcoming ? null : i.publishedTimeText.simpleText,
+          viewCount: upcoming
+            ? null
+            : live
+            ? i.viewCountText.runs.reduce((a, i) => a + i.text, "")
+            : i.viewCountText.simpleText,
           animatedThumbnail: i.richThumbnail
             ? i.richThumbnail.movingThumbnailRenderer.movingThumbnailDetails.thumbnails.pop().url
             : null,
@@ -186,10 +192,11 @@ function parseSubscriptionsData(data) {
             icon: i.channelThumbnail.thumbnails[0].url,
             verified: badges.includes("VERIFIED")
           },
-          duration: live ? null : overlayData.thumbnailOverlayTimeStatusRenderer.text.simpleText,
+          duration: live || upcoming ? null : overlayData.thumbnailOverlayTimeStatusRenderer.text.simpleText,
           progress: overlayData.thumbnailOverlayResumePlaybackRenderer
             ? overlayData.thumbnailOverlayResumePlaybackRenderer.percentDurationWatched
-            : 0
+            : 0,
+          __DATA_RAW: i
         };
       })
   };
@@ -329,7 +336,6 @@ async function load() {
       })
       .then((cookie) => (SAPISID = cookie.value))
       .then(getSubscriptionsFeed)
-      .catch(login)
       .then(({ token, items, etc }) => {
         activeIcon.src = etc.userIcon;
         x = [token, items, etc.context];
