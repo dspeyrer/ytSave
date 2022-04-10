@@ -6,6 +6,8 @@
   "author": "Deven Speyrer <devenspeyrer@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "preact": "^10.7.1",
+    "typescript": "^4.6.3",
     "webextension-polyfill": "^0.9.0"
   },
   "packageManager": "yarn@3.2.0",
@@ -14,6 +16,8 @@
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@types/webextension-polyfill": "^0.8.3",
     "rollup": "^2.70.1",
-    "rollup-plugin-terser": "^7.0.2"
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.31.2",
+    "tslib": "^2.3.1"
   }
 }

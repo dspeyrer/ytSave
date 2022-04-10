@@ -38,7 +38,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(
   {
     urls: ["https://www.youtube.com/*"]
   },
-  ("requestHeaders blocking" + (firefox ? "" : " extraHeaders")).split(" ")
+  firefox ? ["requestHeaders", "blocking"] : ["requestHeaders", "blocking", "extraHeaders"]
 );
 
 function hideUserlist() {
