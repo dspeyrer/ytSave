@@ -11,7 +11,7 @@ export default {
   output: {
     sourcemap: true,
     format: "esm",
-    file: "dist/js/bundle.js"
+    file: "public/dist/bundle.js"
   },
   plugins: [
     svelte({

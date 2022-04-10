@@ -1,4 +1,4 @@
-dist/js
+public/dist
 .pnp.*
 .yarn/*
 !.yarn/patches

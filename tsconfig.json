@@ -9,5 +9,5 @@
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist/js"
   },
-  "exclude": ["rollup.config.js", "dist/**/*"]
+  "exclude": ["rollup.config.js", "public/dist/*"]
 }
