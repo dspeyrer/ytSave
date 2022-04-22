@@ -1,10 +1,6 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "jsx": "react-jsx",
-    "jsxImportSource": "preact",
-    "allowJs": true,
-    "checkJs": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist/js"
