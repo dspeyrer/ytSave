@@ -1,4 +1,6 @@
-<script context="module">
+<script context="module" lang="ts">
+	import browser from 'webextension-polyfill'
+
 	const preload = Promise.all([document.fonts.load('14px Roboto')])
 </script>
 
@@ -8,37 +10,54 @@
 	import context from './context'
 	import * as yt from './youtube'
 
-	async function next() {
-		$context.items.shift()
-		if (!$context.items.length) context.set(await yt.getSubscriptionsFeed($context.token))
-		context.update()
+	function checkIfSeen() {
+		if ($context.seen.includes($context.items[0].id)) cont()
+		return true
 	}
 
-	async function wl() {
+	function next(addToWl: boolean) {
+		const current = cont()
+
+		let seen = [current.id, ...$context.seen]
+
+		$context.seen = seen
+
+		browser.storage.sync.set({
+			seen
+		})
+
+		if (addToWl) yt.editPlaylist(current.id)
+	}
+
+	function cont() {
 		const current = $context.items.shift()
-		yt.editPlaylist(current.id)
-		if (!$context.items.length) context.set(await yt.getSubscriptionsFeed($context.token))
 		context.update()
+		if (!$context.items.length) (async () => context.set(await yt.getSubscriptionsFeed($context.token)))()
+		return current
 	}
 </script>
 
-<Loader load={Promise.all([load(), preload])}>
-	<div id="wrapper">
-		<img src={$context.items[0].thumbnail} alt="" id="thumb" />
-		<br />
-		<span id="title">{$context.items[0].title}</span>
-		<span id="channel">
-			<img src={$context.items[0].channel.icon} alt="" id="channelIcon" />
-			{$context.items[0].channel.name}</span
-		>
-		<span id="duration">{$context.items[0].duration}</span>
-		<span id="watched">Watched {$context.items[0].progress}%</span>
-		<span id="date">Uploaded {$context.items[0].published}</span>
-		<span id="buttons">
-			<button on:click={next} id="skip">Skip</button>
-			<button on:click={wl} id="wl">Add to Watch Later</button>
-		</span>
-	</div>
+<Loader load={Promise.all([load(), preload])}
+	>{#if $context.items.length && checkIfSeen()}
+		<div id="wrapper">
+			<img src={$context.items[0].thumbnail} alt="" id="thumb" />
+			<br />
+			<span id="title">{$context.items[0].title}</span>
+			<span id="channel">
+				<img src={$context.items[0].channel.icon} alt="" id="channelIcon" />
+				{$context.items[0].channel.name}</span
+			>
+			<span id="duration">{$context.items[0].duration}</span>
+			<span id="watched">Watched {$context.items[0].progress}%</span>
+			<span id="date">Uploaded {$context.items[0].published}</span>
+			<span id="buttons">
+				<button on:click={() => next(false)} id="skip">Skip</button>
+				<button on:click={() => next(true)} id="wl">Add to Watch Later</button>
+			</span>
+		</div>
+	{:else}
+		loading
+	{/if}
 </Loader>
 
 <style>

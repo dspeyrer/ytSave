@@ -38,6 +38,12 @@ export async function load() {
 			.then(({ value }) => value)
 	})
 
+	let { seen } = await browser.storage.sync.get('seen')
+
+	context.set({
+		seen: seen || []
+	})
+
 	context.set(await yt.getSubscriptionsFeed())
 }
 
