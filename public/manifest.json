@@ -1,16 +1,16 @@
 {
-  "manifest_version": 2,
-  "name": "ytSave",
-  "description": "Add YouTube subscriptions to Watch Later",
-  "version": "0.1.0",
-  "permissions": ["storage", "https://www.youtube.com/*", "cookies", "webRequest", "webRequestBlocking"],
-  "browser_action": {
-    "default_popup": "index.html",
-    "default_title": "ytSave"
-  },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "ytsave@dspeyrer"
-    }
-  }
+	"manifest_version": 2,
+	"name": "ytSave",
+	"description": "Add YouTube subscriptions to Watch Later",
+	"version": "0.1.0",
+	"permissions": ["storage", "https://www.youtube.com/*", "cookies", "webRequest", "webRequestBlocking"],
+	"browser_action": {
+		"default_popup": "index.html",
+		"default_title": "ytSave"
+	},
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "ytsave@dspeyrer"
+		}
+	}
 }

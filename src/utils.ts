@@ -38,9 +38,7 @@ export async function load() {
 			.then(({ value }) => value)
 	})
 
-	let feed = await yt.getSubscriptionsFeed()
-
-	return feed
+	context.set(await yt.getSubscriptionsFeed())
 }
 
 export function preloadImage(url: string) {
