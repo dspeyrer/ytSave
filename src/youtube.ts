@@ -1,4 +1,6 @@
 import context from "./context";
+import { preloadImage } from "./utils";
+import browser from "webextension-polyfill";
 
 async function sha1hash(data) {
   return [...new Uint8Array(await crypto.subtle.digest("SHA-1", new TextEncoder().encode(data)))]
@@ -153,34 +155,55 @@ export async function getUsers() {
   });
 
   let resBody = await res.text();
-  return JSON.parse(resBody.slice(5))
-    .data.actions[0].getMultiPageMenuAction.menu.multiPageMenuRenderer.sections.map((i) => i.accountSectionListRenderer)
-    .map((i, index) => {
-      let email = index
-        ? i.contents[0].accountItemSectionRenderer.header.accountItemSectionHeaderRenderer.title.runs[0].text
-        : i.header.googleAccountHeaderRenderer.email.simpleText;
+  return await Promise.all(
+    JSON.parse(resBody.slice(5))
+      .data.actions[0].getMultiPageMenuAction.menu.multiPageMenuRenderer.sections.map(
+        (i) => i.accountSectionListRenderer
+      )
+      .map((i, index) => {
+        let email = index
+          ? i.contents[0].accountItemSectionRenderer.header.accountItemSectionHeaderRenderer.title.runs[0].text
+          : i.header.googleAccountHeaderRenderer.email.simpleText;
 
-      let accounts = i.contents[0].accountItemSectionRenderer.contents;
-      accounts = (index ? accounts : accounts.slice(0, accounts.length - 1))
-        .map(({ accountItem }) => {
-          return {
-            active: accountItem.isSelected,
-            name: accountItem.accountName.simpleText,
-            icon: accountItem.accountPhoto.thumbnails[0].url,
-            endpoint:
-              "https://www.youtube.com" +
-              accountItem.serviceEndpoint.selectActiveIdentityEndpoint.supportedTokens.reduce((a, i) => {
-                return { ...a, ...i };
-              }, {}).accountSigninToken.signinUrl,
-            byline: accountItem.accountByline.simpleText
-          };
-        })
-        .sort(sortActive);
-      return {
-        email,
-        active: !!accounts.find((i) => i.active),
-        accounts
-      };
-    })
-    .sort(sortActive);
+        let accounts = i.contents[0].accountItemSectionRenderer.contents;
+        accounts = (index ? accounts : accounts.slice(0, accounts.length - 1))
+          .map(({ accountItem }) => {
+            return {
+              active: accountItem.isSelected,
+              name: accountItem.accountName.simpleText,
+              icon: accountItem.accountPhoto.thumbnails[0].url,
+              endpoint:
+                "https://www.youtube.com" +
+                accountItem.serviceEndpoint.selectActiveIdentityEndpoint.supportedTokens.reduce((a, i) => {
+                  return { ...a, ...i };
+                }, {}).accountSigninToken.signinUrl,
+              byline: accountItem.accountByline.simpleText
+            };
+          })
+          .sort(sortActive);
+        return {
+          email,
+          active: !!accounts.find((i) => i.active),
+          accounts
+        };
+      })
+      .sort(sortActive)
+      .map(async (i) => ({
+        ...i,
+        accounts: await Promise.all(
+          i.accounts.map(async (j) => {
+            await preloadImage(j.icon);
+            return j;
+          })
+        )
+      }))
+  );
+}
+
+export async function login() {
+  await browser.tabs.create({
+    url: "https://accounts.google.com/AddSession"
+  });
+
+  window.close();
 }
