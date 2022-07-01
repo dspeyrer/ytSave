@@ -2,62 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dist/bundle.css" />
   </head>
-  <body>
-    <div id="loadingContainer">
-      <div id="loader" style="width: 48px; height: 48px" role="progressbar">
-        <div id="loader-container">
-          <div id="spinner">
-            <div id="loader-left" class="loader-sides">
-              <svg class="loader-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="18"
-                  stroke-dasharray="113.097"
-                  stroke-dashoffset="56.549"
-                  stroke-width="4"
-                ></circle>
-              </svg>
-            </div>
-            <div id="loader-gap">
-              <svg class="loader-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="18"
-                  stroke-dasharray="113.097"
-                  stroke-dashoffset="56.549"
-                  stroke-width="3.2"
-                ></circle>
-              </svg>
-            </div>
-            <div id="loader-right" class="loader-sides">
-              <svg class="loader-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="18"
-                  stroke-dasharray="113.097"
-                  stroke-dashoffset="56.549"
-                  stroke-width="4"
-                ></circle>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="content" style="opacity: 0">
-      <a href="javascript:void">Hello World</a>
-      <div id="userSelect">
-        <img class="icon" id="activeIcon" />
-        <div id="userList-wrapper" style="opacity: 0; pointer-events: none">
-          <div id="userList"></div>
-        </div>
-      </div>
-    </div>
-    <script src="js/bundle.js"></script>
+    <script type="module" src="dist/bundle.js"></script>
   </body>
 </html>
