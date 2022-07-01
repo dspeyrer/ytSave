@@ -135,7 +135,7 @@ export async function getSubscriptionsFeed(token?: string): Promise<{
 				response.onResponseReceivedActions[0].appendContinuationItemsAction.continuationItems
 			)
 		} catch (e) {
-			if (response.mainAppWebResponseContext.loggedOut) {
+			if (response.responseContext.mainAppWebResponseContext.loggedOut) {
 				return await new Promise(resolve => {
 					setTimeout(() => {
 						getSubscriptionsFeed(token).then(resolve)
@@ -220,7 +220,7 @@ export async function login() {
 }
 
 export async function editPlaylist(input, playlistId = 'WL') {
-	await internalApiRequest(
+	let response = await internalApiRequest(
 		'POST',
 		'browse/edit_playlist',
 		{
@@ -239,4 +239,7 @@ export async function editPlaylist(input, playlistId = 'WL') {
 		},
 		context.get('feed')
 	)
+
+	if (response.status == 'STATUS_FAILED')
+		await new Promise(resolve => setTimeout(() => editPlaylist(input, playlistId).then(resolve), 1000))
 }
