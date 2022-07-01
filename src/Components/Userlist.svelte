@@ -4,7 +4,9 @@
 </script>
 
 <div id="wrapper">
-	<Loader load={getUsers()} let:data>
+	{#await getUsers()}
+		<Loader />
+	{:then data}
 		<div id="userList">
 			{#each data as user}
 				<span class="email">{user.email}</span>
@@ -22,7 +24,7 @@
 				<img src="adduser.svg" alt="" /> Add another account
 			</div>
 		</div>
-	</Loader>
+	{/await}
 </div>
 
 <style>
