@@ -116,7 +116,10 @@ function parseSubscriptionsData(data) {
 	}
 }
 
-export async function getSubscriptionsFeed(token?: string) {
+export async function getSubscriptionsFeed(token?: string): Promise<{
+	token: string
+	items: any[]
+}> {
 	if (token && context) {
 		let response = await internalApiRequest(
 			'POST',
@@ -127,7 +130,19 @@ export async function getSubscriptionsFeed(token?: string) {
 			context.get('feed')
 		)
 
-		return parseSubscriptionsData(response.onResponseReceivedActions[0].appendContinuationItemsAction.continuationItems)
+		try {
+			return parseSubscriptionsData(
+				response.onResponseReceivedActions[0].appendContinuationItemsAction.continuationItems
+			)
+		} catch (e) {
+			if (response.mainAppWebResponseContext.loggedOut) {
+				return await new Promise(resolve => {
+					setTimeout(() => {
+						getSubscriptionsFeed(token).then(resolve)
+					}, 1000)
+				})
+			}
+		}
 	} else {
 		let response = await getYoutubeData('feed/subscriptions')
 

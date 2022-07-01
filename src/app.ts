@@ -34,11 +34,16 @@ export class State {
 		this.update()
 	}
 
-	next(watchLater: boolean) {
+	next(action: number) {
 		let { id } = this.queue.shift()
 		this.continuePages()
 
-		if (watchLater) yt.editPlaylist(id)
+		if (action == 1) yt.editPlaylist(id)
+		else if (action == 2)
+			browser.tabs.create({
+				active: false,
+				url: `https://www.youtube.com/watch?v=${id}`
+			})
 
 		this.seen.push(id)
 		browser.storage.sync.set({ seen: this.seen })

@@ -19,8 +19,9 @@
 			<span id="watched">Watched {$state.progress}%</span>
 			<span id="date">{$state.published}</span>
 			<span id="buttons">
-				<button on:click={() => state.next(false)} id="skip">Skip</button>
-				<button on:click={() => state.next(true)} id="wl">Add to Watch Later</button>
+				<button on:click={() => state.next(0)} id="skip">Skip</button>
+				<button on:click={() => state.next(1)} id="wl">Watch Later</button>
+				<button on:click={() => state.next(2)} id="open">Open</button>
 			</span>
 		</div>
 	{:else}
@@ -58,5 +59,10 @@
 	#skip {
 		background-color: white;
 		border: white solid;
+	}
+
+	#open {
+		background-color: darkgrey;
+		border: darkgrey solid;
 	}
 </style>
