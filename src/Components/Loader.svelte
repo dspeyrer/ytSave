@@ -1,47 +1,18 @@
-<script lang="ts">
-	import { blur, fade } from 'svelte/transition'
-
-	export let load: Promise<any>
-	export let transitionDuration: number = 200
-</script>
-
-{#await load}
-	<div class="wrapper" out:fade={{ duration: transitionDuration }}>
-		<div id="loader" role="progressbar">
-			<div id="container">
-				<div id="spinner">
-					{#each [{ i: 'left', w: 4 }, { i: 'gap', w: 3.2 }, { i: 'right', w: 4 }] as { i, w }}
-						<div id={i} class="sides">
-							<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-								<circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" stroke-width={w} />
-							</svg>
-						</div>
-					{/each}
+<div id="loader" role="progressbar">
+	<div id="container">
+		<div id="spinner">
+			{#each [{ i: 'left', w: 4 }, { i: 'gap', w: 3.2 }, { i: 'right', w: 4 }] as { i, w }}
+				<div id={i} class="sides">
+					<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" stroke-width={w} />
+					</svg>
 				</div>
-			</div>
+			{/each}
 		</div>
 	</div>
-{:then data}
-	<div class="wrapper" in:fade={{ duration: transitionDuration }}>
-		<slot {data} />
-	</div>
-{:catch error}
-	<div class="wrapper" in:fade={{ duration: transitionDuration }}>
-		<slot {error} name="error"><div id="error">An unknown error has occured.</div></slot>
-	</div>
-{/await}
+</div>
 
 <style>
-	.wrapper {
-		position: fixed;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
 	/**
   * @license
   * Copyright Google LLC All Rights Reserved.

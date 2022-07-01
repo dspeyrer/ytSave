@@ -1,64 +1,32 @@
-<script context="module" lang="ts">
-	import browser from 'webextension-polyfill'
-
-	const preload = Promise.all([document.fonts.load('14px Roboto')])
-</script>
-
 <script lang="ts">
 	import Loader from './Components/Loader.svelte'
-	import { load } from './utils'
-	import context from './context'
-	import * as yt from './youtube'
-
-	function checkIfSeen() {
-		if ($context.seen.includes($context.items[0].id)) cont()
-		return true
-	}
-
-	function next(addToWl: boolean) {
-		const current = cont()
-
-		let seen = [current.id, ...$context.seen]
-
-		$context.seen = seen
-
-		browser.storage.sync.set({
-			seen
-		})
-
-		if (addToWl) yt.editPlaylist(current.id)
-	}
-
-	function cont() {
-		const current = $context.items.shift()
-		context.update()
-		if (!$context.items.length) (async () => context.set(await yt.getSubscriptionsFeed($context.token)))()
-		return current
-	}
+	import state from './app'
 </script>
 
-<Loader load={Promise.all([load(), preload])}
-	>{#if $context.items.length && checkIfSeen()}
+{#await state.init()}
+	<Loader />
+{:then}
+	{#if $state}
 		<div id="wrapper">
-			<img src={$context.items[0].thumbnail} alt="" id="thumb" />
+			<img src={$state.thumbnail} alt="" id="thumb" />
 			<br />
-			<span id="title">{$context.items[0].title}</span>
+			<span id="title">{$state.title}</span>
 			<span id="channel">
-				<img src={$context.items[0].channel.icon} alt="" id="channelIcon" />
-				{$context.items[0].channel.name}</span
+				<img src={$state.channel.icon} alt="" id="channelIcon" />
+				{$state.channel.name}</span
 			>
-			<span id="duration">{$context.items[0].duration}</span>
-			<span id="watched">Watched {$context.items[0].progress}%</span>
-			<span id="date">Uploaded {$context.items[0].published}</span>
+			<span id="duration">{$state.duration}</span>
+			<span id="watched">Watched {$state.progress}%</span>
+			<span id="date">{$state.published}</span>
 			<span id="buttons">
-				<button on:click={() => next(false)} id="skip">Skip</button>
-				<button on:click={() => next(true)} id="wl">Add to Watch Later</button>
+				<button on:click={() => state.next(false)} id="skip">Skip</button>
+				<button on:click={() => state.next(true)} id="wl">Add to Watch Later</button>
 			</span>
 		</div>
 	{:else}
 		loading
 	{/if}
-</Loader>
+{/await}
 
 <style>
 	#wrapper {
