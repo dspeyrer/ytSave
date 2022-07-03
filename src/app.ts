@@ -4,20 +4,61 @@ import * as yt from './youtube'
 import context from './context'
 import { load } from './utils'
 
+type Pool = {
+	id: string
+	left: number
+	data: string[]
+}
+
+class Seen {
+	private pools: Pool[]
+
+	constructor() {
+		this.pools = '0123456789ax'.split('').map(i => ({ id: i, left: 0, data: [] }))
+	}
+
+	async init() {
+		for (let pool of this.pools) {
+			let data = (await browser.storage.sync.get(pool.id)[pool.id]) || ''
+			pool.data = data.match(/.{11}/g) || []
+			pool.left = (pool.id == 'x' ? 372 : 744) - pool.data.length
+		}
+	}
+
+	async add(id: string): Promise<void> {
+		for (let pool of this.pools) {
+			if (pool.left) {
+				pool.data.push(id)
+				pool.left--
+				await browser.storage.sync.set({ [pool.id]: pool.data.join('') })
+				return
+			}
+		}
+	}
+
+	has(id: string): boolean {
+		for (let pool of this.pools) if (pool.data.includes(id)) return true
+		return false
+	}
+}
+
 export class State {
 	private queue = []
 	private subscribers = []
 
-	private seen = []
+	private seen: Seen
+
+	constructor() {
+		this.seen = new Seen()
+	}
 
 	async init() {
-		let { seen } = await browser.storage.sync.get('seen')
-		this.seen = seen || []
+		await this.seen.init()
 
 		let { items, token } = await load()
 		context.set({ token })
 
-		this.queue = items.filter(i => !this.seen.includes(i.id))
+		this.queue = items.filter(i => !this.seen.has(i.id))
 		await this.continuePages()
 	}
 
@@ -28,7 +69,7 @@ export class State {
 			let { token, items } = await yt.getSubscriptionsFeed(context.get('token'))
 			context.set({ token })
 
-			this.queue = this.queue.concat(items.filter(i => !this.seen.includes(i.id)))
+			this.queue = this.queue.concat(items.filter(i => !this.seen.has(i.id)))
 		}
 
 		this.update()
@@ -45,8 +86,7 @@ export class State {
 				url: `https://www.youtube.com/watch?v=${id}`
 			})
 
-		this.seen.push(id)
-		browser.storage.sync.set({ seen: this.seen })
+		this.seen.add(id)
 	}
 
 	subscribe(fn: (value: AnyObject) => void): () => void {
