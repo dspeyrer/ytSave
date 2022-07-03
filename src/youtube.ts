@@ -9,7 +9,7 @@ async function sha1hash(data) {
 }
 
 async function apiAuthHeader() {
-	let timestamp = Math.floor(new Date().getTime() / 1000)
+	let timestamp = Math.floor(new Date().getTime() / 1000) - 1
 	return `SAPISIDHASH ${timestamp}_${await sha1hash(
 		timestamp + ' ' + context.get('SAPISID') + ' https://www.youtube.com'
 	)}`
@@ -245,9 +245,9 @@ export async function editPlaylist(input, playlistId = 'WL') {
 	)
 
 	if (response.status == 'STATUS_FAILED')
-		await new Promise(resolve => setTimeout(() => editPlaylist(input, playlistId).then(resolve), 7000))
-	else
-		context.set({
-			loadingCounter: context.get('loadingCounter') - 1
-		})
+		await new Promise(resolve => setTimeout(() => editPlaylist(input, playlistId).then(resolve), 3000))
+
+	context.set({
+		loadingCounter: context.get('loadingCounter') - 1
+	})
 }
