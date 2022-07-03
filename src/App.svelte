@@ -25,7 +25,7 @@
 			</span>
 		</div>
 	{:else}
-		loading
+		<Loader />
 	{/if}
 {/await}
 

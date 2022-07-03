@@ -1,28 +1,32 @@
 {
-  "name": "ytsave",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/dspeyrer/ytSave.git",
-  "author": "Deven Speyrer <devenspeyrer@gmail.com>",
-  "license": "MIT",
-  "dependencies": {
-    "preact": "^10.7.1",
-    "svelte": "^3.47.0",
-    "typescript": "^4.6.3",
-    "webextension-polyfill": "^0.9.0"
-  },
-  "packageManager": "yarn@3.2.0",
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^21.0.3",
-    "@rollup/plugin-node-resolve": "^13.1.3",
-    "@rollup/plugin-typescript": "^8.3.1",
-    "@types/webextension-polyfill": "^0.8.3",
-    "rollup": "^2.70.1",
-    "rollup-plugin-css-only": "^3.1.0",
-    "rollup-plugin-svelte": "^7.1.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript2": "^0.31.2",
-    "svelte-preprocess": "^4.10.5",
-    "tslib": "^2.3.1"
-  }
+	"name": "ytsave",
+	"version": "1.0.0",
+	"main": "index.js",
+	"repository": "https://github.com/dspeyrer/ytSave.git",
+	"author": "Deven Speyrer <devenspeyrer@gmail.com>",
+	"license": "MIT",
+	"dependencies": {
+		"preact": "^10.7.1",
+		"svelte": "^3.47.0",
+		"typescript": "^4.6.3",
+		"webextension-polyfill": "^0.9.0"
+	},
+	"scripts": {
+		"build": "rollup -c",
+		"package": "cd public && web-ext build --overwrite-dest"
+	},
+	"packageManager": "yarn@3.2.0",
+	"devDependencies": {
+		"@rollup/plugin-commonjs": "^21.0.3",
+		"@rollup/plugin-node-resolve": "^13.1.3",
+		"@rollup/plugin-typescript": "^8.3.1",
+		"@types/webextension-polyfill": "^0.8.3",
+		"rollup": "^2.70.1",
+		"rollup-plugin-css-only": "^3.1.0",
+		"rollup-plugin-svelte": "^7.1.0",
+		"rollup-plugin-terser": "^7.0.2",
+		"rollup-plugin-typescript2": "^0.31.2",
+		"svelte-preprocess": "^4.10.5",
+		"tslib": "^2.3.1"
+	}
 }

@@ -19,7 +19,7 @@ class Seen {
 
 	async init() {
 		for (let pool of this.pools) {
-			let data = (await browser.storage.sync.get(pool.id)[pool.id]) || ''
+			let data = (await browser.storage.sync.get(pool.id))[pool.id] || ''
 			pool.data = data.match(/.{11}/g) || []
 			pool.left = (pool.id == 'x' ? 372 : 744) - pool.data.length
 		}

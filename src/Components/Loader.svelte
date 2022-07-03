@@ -1,18 +1,30 @@
-<div id="loader" role="progressbar">
-	<div id="container">
-		<div id="spinner">
-			{#each [{ i: 'left', w: 4 }, { i: 'gap', w: 3.2 }, { i: 'right', w: 4 }] as { i, w }}
-				<div id={i} class="sides">
-					<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-						<circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" stroke-width={w} />
-					</svg>
-				</div>
-			{/each}
+<div class="wrapper">
+	<div id="loader" role="progressbar">
+		<div id="container">
+			<div id="spinner">
+				{#each [{ i: 'left', w: 4 }, { i: 'gap', w: 3.2 }, { i: 'right', w: 4 }] as { i, w }}
+					<div id={i} class="sides">
+						<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+							<circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" stroke-width={w} />
+						</svg>
+					</div>
+				{/each}
+			</div>
 		</div>
 	</div>
 </div>
 
 <style>
+	.wrapper {
+		position: fixed;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
 	/**
   * @license
   * Copyright Google LLC All Rights Reserved.

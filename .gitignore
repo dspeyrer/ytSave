@@ -1,4 +1,5 @@
 public/dist
+public/web-ext-artifacts
 .pnp.*
 .yarn/*
 !.yarn/patches
