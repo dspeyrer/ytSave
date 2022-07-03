@@ -1,7 +1,9 @@
 type AnyObject = { [key: string]: any }
 
 export class Store {
-	private value = {}
+	private value = {
+		loadingCounter: 0
+	}
 	private subscribers = []
 
 	subscribe(fn: (value: AnyObject) => void): () => void {
@@ -12,15 +14,11 @@ export class Store {
 
 	set(value: AnyObject) {
 		Object.assign(this.value, value)
-		this.update()
+		this.subscribers.forEach(i => i(this.value))
 	}
 
 	get(value: string): any {
 		return this.value[value]
-	}
-
-	update() {
-		this.subscribers.forEach(i => i(this.value))
 	}
 }
 

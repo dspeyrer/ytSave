@@ -220,6 +220,10 @@ export async function login() {
 }
 
 export async function editPlaylist(input, playlistId = 'WL') {
+	context.set({
+		loadingCounter: context.get('loadingCounter') + 1
+	})
+
 	let response = await internalApiRequest(
 		'POST',
 		'browse/edit_playlist',
@@ -241,5 +245,9 @@ export async function editPlaylist(input, playlistId = 'WL') {
 	)
 
 	if (response.status == 'STATUS_FAILED')
-		await new Promise(resolve => setTimeout(() => editPlaylist(input, playlistId).then(resolve), 1000))
+		await new Promise(resolve => setTimeout(() => editPlaylist(input, playlistId).then(resolve), 7000))
+	else
+		context.set({
+			loadingCounter: context.get('loadingCounter') - 1
+		})
 }
